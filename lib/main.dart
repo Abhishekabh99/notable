@@ -1,39 +1,35 @@
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/adapters.dart';
+import 'package:notable/screens/add_note_screen.dart';
 import 'package:notable/utilities/constants.dart';
 
 import 'models/note.dart';
 import 'screens/home_screen.dart';
 
 Future<void> main() async {
-  WidgetsFlutterBinding
-      .ensureInitialized(); // this ensures that the engine is initialized before calling hive.initFlutter.
+  WidgetsFlutterBinding.ensureInitialized();
   await Hive.initFlutter();
   Hive.registerAdapter(NoteAdapter());
-  runApp(const MyApp());
-}
-
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
-  @override
-  Widget build(BuildContext context) {
-    return Notable();
-  }
+  runApp(
+    Notable(),
+  );
 }
 
 class Notable extends StatelessWidget {
-  const Notable({super.key});
+  const Notable({Key? key}) : super(key: key);
 
-// Future<void> example() async {
-//   final prefs = await SharedPreferences.getInstance();
-//   await prefs.setString('key','vlaue');
-//   String?
-// }
+  // Future<void> example() async {
+  //   final prefs = await SharedPreferences.getInstance();
+  //   await prefs.setString('key', 'value');
+  //   String? value = prefs.getString('key');
+  //   print(value);
+  //   prefs.remove('key');
+  // }
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Notable',
+      debugShowCheckedModeBanner: false,
       theme: ThemeData.dark().copyWith(
         appBarTheme: const AppBarTheme(
           backgroundColor: kDarkGrey,
@@ -42,20 +38,30 @@ class Notable extends StatelessWidget {
         ),
         scaffoldBackgroundColor: kDarkGrey,
       ),
+      routes: {
+        AddNoteScreen.id: (context) => AddNoteScreen(),
+      },
       home: FutureBuilder(
         future: Hive.openBox('notes'),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.done) {
             if (snapshot.hasError) {
-              return Center(
-                child: Text("An error occured"),
+              return Scaffold(
+                backgroundColor: kDarkGrey,
+                body: Center(
+                  child: Text("An error occurred"),
+                ),
               );
             }
+
             return HomeScreen();
           } else {
-            return Center(
-              child: CircularProgressIndicator(
-                color: kYellowColor,
+            return Scaffold(
+              backgroundColor: kDarkGrey,
+              body: Center(
+                child: CircularProgressIndicator(
+                  color: kYellowColor,
+                ),
               ),
             );
           }
